@@ -23,18 +23,52 @@ function Register() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px' }}>
-      <h1>Register</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <input name="name" placeholder="Name" value={form.name} onChange={handleChange} required style={{ padding: '8px' }} />
-        <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required style={{ padding: '8px' }} />
-        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required style={{ padding: '8px' }} />
-        <button type="submit" style={{ padding: '10px', background: '#222', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-          Register
-        </button>
-      </form>
-      <p>Already have an account? <Link to="/login">Login</Link></p>
+    <div className="max-w-md mx-auto px-6 py-16">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Register</h1>
+
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            name="name"
+            placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            Register
+          </button>
+        </form>
+
+        <p className="text-gray-600 mt-4 text-sm">
+          Already have an account?{' '}
+          <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
+        </p>
+      </div>
     </div>
   );
 }

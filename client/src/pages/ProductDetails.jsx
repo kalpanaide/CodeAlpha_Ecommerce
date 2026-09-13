@@ -23,8 +23,8 @@ function ProductDetails() {
       });
   }, [id]);
 
-  if (loading) return <p style={{ padding: '20px' }}>Loading...</p>;
-  if (!product) return <p style={{ padding: '20px' }}>Product not found.</p>;
+  if (loading) return <p className="text-center text-gray-500 mt-10">Loading...</p>;
+  if (!product) return <p className="text-center text-gray-500 mt-10">Product not found.</p>;
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
@@ -32,28 +32,39 @@ function ProductDetails() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px' }}>
-      <img src={product.image} alt={product.name} style={{ width: '100%', maxHeight: '300px', objectFit: 'cover' }} />
-      <h1>{product.name}</h1>
-      <p>{product.description}</p>
-      <h2>₹{product.price}</h2>
-      <p>In stock: {product.stock}</p>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '15px 0' }}>
-        <label>Quantity:</label>
-        <input
-          type="number"
-          min="1"
-          max={product.stock}
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-          style={{ width: '60px', padding: '5px' }}
+    <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col md:flex-row gap-8">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full md:w-1/2 h-72 object-cover rounded-lg"
         />
-      </div>
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold text-gray-800">{product.name}</h1>
+          <p className="text-gray-600 mt-2">{product.description}</p>
+          <p className="text-3xl font-bold text-blue-600 mt-4">₹{product.price}</p>
+          <p className="text-sm text-gray-500 mt-1">In stock: {product.stock}</p>
 
-      <button onClick={handleAddToCart} style={{ padding: '10px 20px', background: '#222', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-        Add to Cart
-      </button>
+          <div className="flex items-center gap-3 mt-6">
+            <label className="text-gray-700 font-medium">Quantity:</label>
+            <input
+              type="number"
+              min="1"
+              max={product.stock}
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <button
+            onClick={handleAddToCart}
+            className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -15,18 +15,22 @@ function Checkout() {
 
   if (!token) {
     return (
-      <div style={{ padding: '20px' }}>
-        <h2>Please log in to checkout</h2>
-        <Link to="/login">Go to Login</Link>
+      <div className="max-w-2xl mx-auto px-6 py-16 text-center">
+        <h2 className="text-2xl font-semibold text-gray-800">Please log in to checkout</h2>
+        <Link to="/login" className="inline-block mt-4 text-blue-600 hover:underline">
+          Go to Login
+        </Link>
       </div>
     );
   }
 
   if (cartItems.length === 0) {
     return (
-      <div style={{ padding: '20px' }}>
-        <h2>Your cart is empty</h2>
-        <Link to="/">Go back to shopping</Link>
+      <div className="max-w-2xl mx-auto px-6 py-16 text-center">
+        <h2 className="text-2xl font-semibold text-gray-800">Your cart is empty</h2>
+        <Link to="/" className="inline-block mt-4 text-blue-600 hover:underline">
+          Go back to shopping
+        </Link>
       </div>
     );
   }
@@ -56,23 +60,30 @@ function Checkout() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px' }}>
-      <h1>Checkout</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {cartItems.map(item => (
-        <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
-          <span>{item.name} x {item.quantity}</span>
-          <span>₹{item.price * item.quantity}</span>
-        </div>
-      ))}
-      <h2 style={{ marginTop: '20px' }}>Total: ₹{total}</h2>
-      <button
-        onClick={handlePlaceOrder}
-        disabled={placing}
-        style={{ padding: '10px 20px', background: '#222', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px' }}
-      >
-        {placing ? 'Placing order...' : 'Place Order'}
-      </button>
+    <div className="max-w-2xl mx-auto px-6 py-10">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Checkout</h1>
+
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 divide-y">
+        {cartItems.map(item => (
+          <div key={item._id} className="flex justify-between p-4">
+            <span className="text-gray-700">{item.name} × {item.quantity}</span>
+            <span className="font-medium text-gray-800">₹{item.price * item.quantity}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-between items-center mt-6">
+        <h2 className="text-xl font-bold text-gray-800">Total: ₹{total}</h2>
+        <button
+          onClick={handlePlaceOrder}
+          disabled={placing}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
+        >
+          {placing ? 'Placing order...' : 'Place Order'}
+        </button>
+      </div>
     </div>
   );
 }
