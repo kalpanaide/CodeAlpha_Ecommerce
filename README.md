@@ -1,4 +1,5 @@
-# CodeAlpha_Ecommerce 🛒
+# ShopSphere 🛒
+*(CodeAlpha Full Stack Development – Task 1: E-commerce Store)*
 
 A full-stack e-commerce web application built as part of the CodeAlpha Full Stack Development Internship.
 

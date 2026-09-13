@@ -18,22 +18,35 @@ function Home() {
       });
   }, []);
 
-  if (loading) return <p style={{ padding: '20px' }}>Loading products...</p>;
+  if (loading) {
+    return <p className="text-center text-gray-500 mt-10">Loading products...</p>;
+  }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Products</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
-        {products.map(product => (
-          <Link key={product._id} to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'black' }}>
-            <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px' }}>
-              <img src={product.image} alt={product.name} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
-              <h3>{product.name}</h3>
-              <p>₹{product.price}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+    <div className="max-w-6xl mx-auto px-6 py-8">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Products</h1>
+
+      {products.length === 0 ? (
+        <p className="text-gray-500">No products available yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map(product => (
+            <Link
+              key={product._id}
+              to={`/product/${product._id}`}
+              className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition p-4 flex flex-col"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-40 object-cover rounded-lg mb-3"
+              />
+              <h3 className="font-semibold text-gray-800">{product.name}</h3>
+              <p className="text-blue-600 font-bold mt-1">₹{product.price}</p>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

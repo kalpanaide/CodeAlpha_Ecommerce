@@ -11,22 +11,27 @@ function Navbar() {
   };
 
   return (
-    <nav style={{ display: 'flex', gap: '20px', padding: '15px', background: '#222', color: 'white', alignItems: 'center' }}>
-      <Link to="/" style={{ color: 'white' }}>Home</Link>
-      <Link to="/cart" style={{ color: 'white' }}>Cart</Link>
-      <Link to="/orders" style={{ color: 'white' }}>My Orders</Link>
+    <nav className="flex items-center gap-6 px-6 py-4 bg-gray-900 text-white shadow-md">
+      <Link to="/" className="text-xl font-bold text-white">🛒 ShopSphere</Link>
+      <Link to="/" className="hover:text-blue-400 transition">Home</Link>
+      <Link to="/cart" className="hover:text-blue-400 transition">Cart</Link>
+      <Link to="/orders" className="hover:text-blue-400 transition">My Orders</Link>
+
       {user ? (
-        <>
-          <span style={{ marginLeft: 'auto' }}>Hi, {user.name}</span>
-          <button onClick={handleLogout} style={{ background: 'transparent', color: 'white', border: '1px solid white', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer' }}>
+        <div className="ml-auto flex items-center gap-4">
+          <span className="text-gray-300">Hi, {user.name}</span>
+          <button
+            onClick={handleLogout}
+            className="border border-white px-3 py-1 rounded-md hover:bg-white hover:text-gray-900 transition"
+          >
             Logout
           </button>
-        </>
+        </div>
       ) : (
-        <>
-          <Link to="/login" style={{ color: 'white', marginLeft: 'auto' }}>Login</Link>
-          <Link to="/register" style={{ color: 'white' }}>Register</Link>
-        </>
+        <div className="ml-auto flex items-center gap-4">
+          <Link to="/login" className="hover:text-blue-400 transition">Login</Link>
+          <Link to="/register" className="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition">Register</Link>
+        </div>
       )}
     </nav>
   );
