@@ -30,3 +30,6 @@ app.use('/api/users', userRoutes);
 
 const orderRoutes = require('./routes/orders');
 app.use('/api/orders', orderRoutes);
+
+const reviewRoutes = require('./routes/reviews');
+app.use('/api/reviews', reviewRoutes);
