@@ -33,3 +33,6 @@ app.use('/api/orders', orderRoutes);
 
 const reviewRoutes = require('./routes/reviews');
 app.use('/api/reviews', reviewRoutes);
+
+const recommendationRoutes = require('./routes/recommendations');
+app.use('/api/recommendations', recommendationRoutes);
