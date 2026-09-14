@@ -18,8 +18,13 @@ function Navbar() {
       <Link to="/orders" className="hover:text-blue-400 transition">My Orders</Link>
 
       {user ? (
-        <div className="ml-auto flex items-center gap-4">
-          <span className="text-gray-300">Hi, {user.name}</span>
+  <div className="ml-auto flex items-center gap-4">
+    {user.isAdmin && (
+      <Link to="/admin" className="text-yellow-400 font-medium hover:text-yellow-300 transition">
+        Admin Dashboard
+      </Link>
+    )}
+    <span className="text-gray-300">Hi, {user.name}</span>
           <button
             onClick={handleLogout}
             className="border border-white px-3 py-1 rounded-md hover:bg-white hover:text-gray-900 transition"
