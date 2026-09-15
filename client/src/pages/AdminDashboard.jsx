@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
 function AdminDashboard() {
@@ -15,7 +15,7 @@ function AdminDashboard() {
   const [uploading, setUploading] = useState(false);
 
   const fetchProducts = () => {
-    axios.get('http://localhost:5000/api/products')
+    api.get('/api/products')
       .then(res => {
         setProducts(res.data);
         setLoading(false);
@@ -24,7 +24,7 @@ function AdminDashboard() {
   };
 
   const fetchOrders = () => {
-    axios.get('http://localhost:5000/api/orders', {
+    api.get('/api/orders', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => setOrders(res.data))
@@ -50,7 +50,7 @@ function AdminDashboard() {
     const formData = new FormData();
     formData.append('image', imageFile);
     try {
-      const res = await axios.post('http://localhost:5000/api/upload', formData, {
+      const res = await api.post('/api/upload', formData, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
       });
       setUploading(false);
@@ -68,11 +68,11 @@ function AdminDashboard() {
       const uploadedImageUrl = await handleImageUpload();
       const payload = { ...form, image: uploadedImageUrl, price: Number(form.price), stock: Number(form.stock) };
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/products/${editingId}`, payload, {
+        await api.put(`/api/products/${editingId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post('http://localhost:5000/api/products', payload, {
+        await api.post('/api/products', payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -101,7 +101,7 @@ function AdminDashboard() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this product?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      await api.delete(`/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchProducts();
@@ -112,7 +112,7 @@ function AdminDashboard() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/api/orders/${orderId}/status`, { status: newStatus }, {
+      await api.put(`/api/orders/${orderId}/status`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchOrders();
@@ -132,26 +132,14 @@ function AdminDashboard() {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
 
       <div className="flex gap-4 mb-6 border-b border-gray-200">
-        <button
-          onClick={() => setActiveTab('products')}
-          className={`pb-3 px-2 font-medium ${activeTab === 'products' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}
-        >
-          Products
-        </button>
-        <button
-          onClick={() => setActiveTab('orders')}
-          className={`pb-3 px-2 font-medium ${activeTab === 'orders' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}
-        >
-          Orders
-        </button>
+        <button onClick={() => setActiveTab('products')} className={`pb-3 px-2 font-medium ${activeTab === 'products' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}>Products</button>
+        <button onClick={() => setActiveTab('orders')} className={`pb-3 px-2 font-medium ${activeTab === 'orders' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}>Orders</button>
       </div>
 
       {activeTab === 'products' && (
         <>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              {editingId ? 'Edit Product' : 'Add New Product'}
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">{editingId ? 'Edit Product' : 'Add New Product'}</h2>
             {error && <p className="text-red-500 mb-3">{error}</p>}
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input name="name" placeholder="Product name" value={form.name} onChange={handleChange} required className="border border-gray-300 rounded-md px-4 py-2" />
@@ -168,9 +156,7 @@ function AdminDashboard() {
                   {uploading ? 'Uploading image...' : editingId ? 'Update Product' : 'Add Product'}
                 </button>
                 {editingId && (
-                  <button type="button" onClick={() => { setEditingId(null); setForm({ name: '', description: '', price: '', image: '', category: '', stock: '' }); setImageFile(null); }} className="px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition">
-                    Cancel
-                  </button>
+                  <button type="button" onClick={() => { setEditingId(null); setForm({ name: '', description: '', price: '', image: '', category: '', stock: '' }); setImageFile(null); }} className="px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition">Cancel</button>
                 )}
               </div>
             </form>
@@ -207,11 +193,7 @@ function AdminDashboard() {
                     <p className="text-sm text-gray-500">Order by {order.user?.name} ({order.user?.email})</p>
                     <p className="font-mono text-xs text-gray-400">{order._id}</p>
                   </div>
-                  <select
-                    value={order.status}
-                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                    className={`text-xs font-semibold px-3 py-1 rounded-full border-0 ${statusColor[order.status]}`}
-                  >
+                  <select value={order.status} onChange={(e) => handleStatusChange(order._id, e.target.value)} className={`text-xs font-semibold px-3 py-1 rounded-full border-0 ${statusColor[order.status]}`}>
                     <option value="Pending">Pending</option>
                     <option value="Shipped">Shipped</option>
                     <option value="Delivered">Delivered</option>

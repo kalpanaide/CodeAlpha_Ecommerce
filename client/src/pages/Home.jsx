@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
 function Home() {
@@ -20,7 +20,7 @@ function Home() {
     if (category) params.category = category;
     if (sort) params.sort = sort;
 
-    axios.get('http://localhost:5000/api/products', { params })
+    api.get('/api/products', { params })
       .then(res => {
         setProducts(res.data);
         setLoading(false);
@@ -31,9 +31,8 @@ function Home() {
       });
   };
 
-  // Fetch all products once initially to build the category dropdown list
   useEffect(() => {
-    axios.get('http://localhost:5000/api/products')
+    api.get('/api/products')
       .then(res => {
         const uniqueCategories = [...new Set(res.data.map(p => p.category).filter(Boolean))];
         setCategories(uniqueCategories);
@@ -47,7 +46,7 @@ function Home() {
 
   useEffect(() => {
     if (token) {
-      axios.get('http://localhost:5000/api/recommendations', {
+      api.get('/api/recommendations', {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => setRecommendations(res.data))
@@ -79,7 +78,6 @@ function Home() {
 
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Products</h1>
 
-      {/* Search, Filter, Sort Bar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <input
           type="text"

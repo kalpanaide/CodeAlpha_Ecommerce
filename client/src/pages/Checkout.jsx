@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -17,9 +17,7 @@ function Checkout() {
     return (
       <div className="max-w-2xl mx-auto px-6 py-16 text-center">
         <h2 className="text-2xl font-semibold text-gray-800">Please log in to checkout</h2>
-        <Link to="/login" className="inline-block mt-4 text-blue-600 hover:underline">
-          Go to Login
-        </Link>
+        <Link to="/login" className="inline-block mt-4 text-blue-600 hover:underline">Go to Login</Link>
       </div>
     );
   }
@@ -28,9 +26,7 @@ function Checkout() {
     return (
       <div className="max-w-2xl mx-auto px-6 py-16 text-center">
         <h2 className="text-2xl font-semibold text-gray-800">Your cart is empty</h2>
-        <Link to="/" className="inline-block mt-4 text-blue-600 hover:underline">
-          Go back to shopping
-        </Link>
+        <Link to="/" className="inline-block mt-4 text-blue-600 hover:underline">Go back to shopping</Link>
       </div>
     );
   }
@@ -45,8 +41,8 @@ function Checkout() {
         price: item.price
       }));
 
-      await axios.post(
-        'http://localhost:5000/api/orders',
+      await api.post(
+        '/api/orders',
         { items, totalAmount: total },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -62,9 +58,7 @@ function Checkout() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Checkout</h1>
-
       {error && <p className="text-red-500 mb-4">{error}</p>}
-
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 divide-y">
         {cartItems.map(item => (
           <div key={item._id} className="flex justify-between p-4">
@@ -73,14 +67,9 @@ function Checkout() {
           </div>
         ))}
       </div>
-
       <div className="flex justify-between items-center mt-6">
         <h2 className="text-xl font-bold text-gray-800">Total: ₹{total}</h2>
-        <button
-          onClick={handlePlaceOrder}
-          disabled={placing}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
-        >
+        <button onClick={handlePlaceOrder} disabled={placing} className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50">
           {placing ? 'Placing order...' : 'Place Order'}
         </button>
       </div>
