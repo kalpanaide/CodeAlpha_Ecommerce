@@ -9,6 +9,8 @@ function AdminDashboard() {
   const [form, setForm] = useState({ name: '', description: '', price: '', image: '', category: '', stock: '' });
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const fetchProducts = () => {
     axios.get('http://localhost:5000/api/products')
@@ -31,11 +33,35 @@ function AdminDashboard() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleImageUpload = async () => {
+    if (!imageFile) return form.image; // no new file selected, keep existing URL (for edits)
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const res = await axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      setUploading(false);
+      return res.data.imageUrl;
+    } catch (err) {
+      setUploading(false);
+      throw new Error('Image upload failed');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      const payload = { ...form, price: Number(form.price), stock: Number(form.stock) };
+      const uploadedImageUrl = await handleImageUpload();
+      const payload = { ...form, image: uploadedImageUrl, price: Number(form.price), stock: Number(form.stock) };
+
       if (editingId) {
         await axios.put(`http://localhost:5000/api/products/${editingId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
@@ -46,10 +72,11 @@ function AdminDashboard() {
         });
       }
       setForm({ name: '', description: '', price: '', image: '', category: '', stock: '' });
+      setImageFile(null);
       setEditingId(null);
       fetchProducts();
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
+      setError(err.response?.data?.message || err.message || 'Something went wrong');
     }
   };
 
@@ -62,6 +89,7 @@ function AdminDashboard() {
       category: product.category,
       stock: product.stock
     });
+    setImageFile(null);
     setEditingId(product._id);
   };
 
@@ -91,14 +119,28 @@ function AdminDashboard() {
           <input name="category" placeholder="Category" value={form.category} onChange={handleChange} className="border border-gray-300 rounded-md px-4 py-2" />
           <input name="price" type="number" placeholder="Price" value={form.price} onChange={handleChange} required className="border border-gray-300 rounded-md px-4 py-2" />
           <input name="stock" type="number" placeholder="Stock" value={form.stock} onChange={handleChange} required className="border border-gray-300 rounded-md px-4 py-2" />
-          <input name="image" placeholder="Image URL" value={form.image} onChange={handleChange} className="border border-gray-300 rounded-md px-4 py-2 md:col-span-2" />
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0])}
+              className="border border-gray-300 rounded-md px-4 py-2 w-full"
+            />
+            {editingId && form.image && !imageFile && (
+              <p className="text-xs text-gray-500 mt-1">Current image will be kept unless you choose a new file.</p>
+            )}
+          </div>
+
           <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} className="border border-gray-300 rounded-md px-4 py-2 md:col-span-2" rows="3" />
+
           <div className="md:col-span-2 flex gap-3">
-            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
-              {editingId ? 'Update Product' : 'Add Product'}
+            <button type="submit" disabled={uploading} className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50">
+              {uploading ? 'Uploading image...' : editingId ? 'Update Product' : 'Add Product'}
             </button>
             {editingId && (
-              <button type="button" onClick={() => { setEditingId(null); setForm({ name: '', description: '', price: '', image: '', category: '', stock: '' }); }} className="px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition">
+              <button type="button" onClick={() => { setEditingId(null); setForm({ name: '', description: '', price: '', image: '', category: '', stock: '' }); setImageFile(null); }} className="px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition">
                 Cancel
               </button>
             )}
@@ -118,14 +160,4 @@ function AdminDashboard() {
                 <p className="font-semibold text-gray-800">{product.name}</p>
                 <p className="text-sm text-gray-500">₹{product.price} · Stock: {product.stock}</p>
               </div>
-              <button onClick={() => handleEdit(product)} className="text-blue-600 hover:underline text-sm font-medium">Edit</button>
-              <button onClick={() => handleDelete(product._id)} className="text-red-500 hover:underline text-sm font-medium">Delete</button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default AdminDashboard;
+              <button onClick={() => handleEdit(product)} className="text-blue-600 hover:underline

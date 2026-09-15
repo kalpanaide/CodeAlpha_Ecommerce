@@ -36,3 +36,6 @@ app.use('/api/reviews', reviewRoutes);
 
 const recommendationRoutes = require('./routes/recommendations');
 app.use('/api/recommendations', recommendationRoutes);
+
+const uploadRoutes = require('./routes/upload');
+app.use('/api/upload', uploadRoutes);
