@@ -4,10 +4,31 @@ const Product = require('../models/Product');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 
-// Get all products
+// Get all products (supports search, filter, sort)
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find();
+    const { search, category, sort } = req.query;
+    let query = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: 'i' }; // case-insensitive search by name
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    let productsQuery = Product.find(query);
+
+    if (sort === 'price-asc') {
+      productsQuery = productsQuery.sort({ price: 1 });
+    } else if (sort === 'price-desc') {
+      productsQuery = productsQuery.sort({ price: -1 });
+    } else {
+      productsQuery = productsQuery.sort({ createdAt: -1 }); // default: newest first
+    }
+
+    const products = await productsQuery;
     res.json(products);
   } catch (err) {
     res.status(500).json({ message: err.message });
